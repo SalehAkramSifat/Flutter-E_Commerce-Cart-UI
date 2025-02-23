@@ -18,12 +18,12 @@ class _ProfileState extends State<Profile> {
     if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => CartPage()),
+        MaterialPageRoute(builder: (context) => CartPage(cartItems: [],)),
       );
     } else if (index == 0) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomeActivity()),
+        MaterialPageRoute(builder: (context) => HomeActivity(cartItems: [], addToCart: (Map<String, dynamic> ) {  },)),
       );
     }
 

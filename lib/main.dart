@@ -8,18 +8,35 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<Map<String, dynamic>> cartItems = [];
+
+  void addToCart(Map<String, dynamic> product) {
+    setState(() {
+      cartItems.add(product);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: HomeActivity(),
+    return MaterialApp(
+      home: HomeActivity(cartItems: cartItems, addToCart: addToCart),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class HomeActivity extends StatefulWidget {
+  final List<Map<String, dynamic>> cartItems;
+  final Function(Map<String, dynamic>) addToCart;
+
+  HomeActivity({required this.cartItems, required this.addToCart});
+
   @override
   _HomeActivityState createState() => _HomeActivityState();
 }
@@ -35,25 +52,17 @@ class _HomeActivityState extends State<HomeActivity> {
     if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => CartPage()),
+        MaterialPageRoute(
+            builder: (context) => CartPage(cartItems: widget.cartItems)),
       );
-
-
     } else if (index == 0) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
-    }else if (index ==2) {
-      Navigator.push(context, MaterialPageRoute(builder:(context) =>Profile()));
+    } else if (index == 2) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
     }
   }
 
   final List<Map<String, dynamic>> product = [
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
-    {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
     {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
     {"image": "assets/apple.jpg", "title": "Apple iPhone 13", "price": "৳999", "rating": 4.5},
   ];
@@ -69,11 +78,33 @@ class _HomeActivityState extends State<HomeActivity> {
         centerTitle: true,
         backgroundColor: Colors.deepPurpleAccent,
         actions: [
-          IconButton(
-            icon: Icon(CupertinoIcons.cart_fill, color: Colors.white),
-            onPressed: () {Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartPage()));},
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(CupertinoIcons.cart_fill, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CartPage(cartItems: widget.cartItems)),
+                  );
+                },
+              ),
+              if (widget.cartItems.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration:
+                    BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                    child: Text(
+                      '${widget.cartItems.length}',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                ),
+            ],
           )
         ],
       ),
@@ -116,8 +147,8 @@ class _HomeActivityState extends State<HomeActivity> {
                             image: product[index]["image"]!,
                             title: product[index]["title"]!,
                             price: product[index]["price"]!,
-                            rating: product[index]["rating"].toString(),
-                          ),
+                            rating: product[index]["rating"].toString(), addToCart: (Map<String, dynamic> ) {  },
+                          )
                         ),
                       );
                     },
@@ -167,6 +198,12 @@ class _HomeActivityState extends State<HomeActivity> {
                                     ),
                                     Text(product[index]["rating"].toString())
                                   ],
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    widget.addToCart(product[index]);
+                                  },
+                                  child: Text("Add to Cart"),
                                 ),
                               ],
                             ),
