@@ -32,8 +32,8 @@ class DetailsActivity extends StatelessWidget {
                 "title": title,
                 "price": price,
               };
-              addToCart(product); // Cart-এ প্রোডাক্ট যোগ করা
-              Navigator.pop(context); // Home Page-এ ফিরে যাওয়া
+              addToCart(product);
+              Navigator.pop(context); 
             },
             child: Text("Add to Cart"),
           ),
@@ -41,7 +41,7 @@ class DetailsActivity extends StatelessWidget {
           // **Buy Button**
           ElevatedButton(
             onPressed: () {
-              // Buy functionality (পরে কাজ করা যাবে)
+              
             },
             child: Text("Buy Now"),
           ),
